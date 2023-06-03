@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor Accessor;
+@{
+    int? customerId = @Accessor.HttpContext.Session.GetInt32("customerId");
+}
+
+<h2>Buy Product</h2>
+
+<form method="post" asp-action="BuyProduct">
+    <input type="hidden" name="customerId" value="@customerId" />
+    <select name="productIds[]" multiple>
+        @if (((IEnumerable<Product>)ViewBag.Products).Count() > 0)
+        {
+            @foreach (var product in ViewBag.Products)
+            {
+                <option value="@product.ID">@product.Name - £ @product.Price</option>
+            }
+        }
+        else
+        {
+            <option disabled>No products to select from them.</option>
+        }
+
+    </select>
+    <input type="submit" value="Buy" />
+</form>

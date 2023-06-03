@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor Accessor;
+@{
+    int? customerId = @Accessor.HttpContext.Session.GetInt32("customerId");
+}
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+    </li>
+}
+else if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">Customers</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+    </li>
+    <li class="nav-item ms-auto">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="LogOut">Logout <strong>@User.Identity.Name</strong></a>
+    </li>
+}else{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-route-id="@customerId" asp-action="Profile">Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="BuyProduct">BuyProduct</a>
+    </li>
+    <li class="nav-item ms-auto">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="LogOut">Logout <strong>@User.Identity.Name</strong></a>
+    </li>
+}

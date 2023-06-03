@@ -1,0 +1,22 @@
+﻿@model CoraetionTask.Models.Customer
+
+@{
+    ViewData["Title"] = "Edit Customer";
+}
+
+<h1 class="text-center">Edit</h1>
+
+<div class="col-4 mx-auto shadow-sm p-3 rounded-2 " style="border:1px solid lightgrey">
+    <h4>Details:</h4>
+    <hr />
+    <div class="col-12" >
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="ID" />
+            <partial name="CreateUpdateCustomerPartial" />
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

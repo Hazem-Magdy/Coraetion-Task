@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center" style="margin-top:130px">
+    @if (User.IsInRole("Admin"))
+    {
+        <h6 class="display-5">هنطرد مين النهارده ؟ @User.Identity.Name صباح الفل يا &#x270B; </h6>
+    }
+    else
+    {
+        <h6 class="display-5">Welcome To Coreation Website &#x270B; </h6>
+        <h1>@User.Identity.Name</h1>
+    }
+
+</div>

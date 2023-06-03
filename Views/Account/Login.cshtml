@@ -1,0 +1,51 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = "User Login";
+}
+
+
+<head>
+    <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+</head>
+
+
+<form asp-controller="Account" asp-action="Login" method="post" class="login-form mt-5">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            <span><b>Sorry!</b> - @TempData["Error"] </span>
+        </div>
+    }
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
+        </label>
+    </div>
+    <div class="d-flex justify-content-evenly ">
+        <button type="submit" class="btn btn-login px-5">Sign In</button>
+        <a class="btn btn-register px-5" asp-action="Register">Register</a>
+    </div>
+    
+
+
+</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

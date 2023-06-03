@@ -1,0 +1,24 @@
+﻿@model CoraetionTask.Models.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+
+<h1 class="text-center">Create</h1>
+
+
+<div class="col-4 mx-auto shadow-sm p-3 rounded-2 " style="border:1px solid lightgrey">
+    <h4>Product</h4>
+    <hr />
+    <div class="col-12">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <partial name="CreateUpdateProductPartial" />
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
