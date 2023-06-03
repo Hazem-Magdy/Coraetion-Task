@@ -1,5 +1,4 @@
 using CoraetionTask.Data;
-using CoraetionTask.Data.DatabaseSeeder;
 using CoraetionTask.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -55,9 +54,6 @@ namespace CoraetionTask
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Account}/{action=Login}/{id?}");
-
-            // seed database
-            DatabaseSeeder.Seed(app);
 
             app.Run();
         }
