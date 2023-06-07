@@ -33,6 +33,14 @@ namespace CoraetionTask.Controllers
         {
             if (ModelState.IsValid)
             {
+                // check if email is already exist
+                var existingEmail = await _userManager.FindByEmailAsync(newAccount.Email);
+                if (existingEmail != null)
+                {
+                    ModelState.AddModelError("Email", "Email already exists please use another email");
+                    return View(newAccount); 
+                }
+
                 // first register will be admin and any other rigester will be customer
                 if (_userManager.Users.Count() > 0)
                 {
@@ -47,10 +55,16 @@ namespace CoraetionTask.Controllers
                     // save new customer in database
                     await _customerRepository.AddAsync(newCustomer);
 
+                    // split full name spaces to make username
+                    string fullnameWithSpaces = newAccount.FullName;
+                    string[] nameParts = fullnameWithSpaces.Split(' ');
+
+                    string fullNameWithNoSpaces = string.Concat(nameParts);
+
                     // assign new customer as a user in the system
                     IdentityUser newUser = new IdentityUser()
                     {
-                        UserName = newAccount.FullName,
+                        UserName = fullNameWithNoSpaces,
                         Email = newAccount.Email,
                         PhoneNumber = newAccount.Mobile,
                     };
