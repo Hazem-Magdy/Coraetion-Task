@@ -8,7 +8,10 @@ namespace CoraetionTask.Services
 
         Task<Customer> GetCustomerByFullName(string customerFullName);
 
+        Task<Customer> GetCustomerByEmailAsync(string customerEmail);
+
+
 
     }
-    
+
 }

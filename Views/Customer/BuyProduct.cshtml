@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @inject IHttpContextAccessor Accessor;
 @{
+    ViewData["Title"] = "Buy Product";
     int? customerId = @Accessor.HttpContext.Session.GetInt32("customerId");
 }
 

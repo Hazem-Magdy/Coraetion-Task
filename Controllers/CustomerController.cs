@@ -1,7 +1,9 @@
 ﻿using CoraetionTask.Models;
 using CoraetionTask.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 
 namespace CoraetionTask.Controllers
 {
@@ -10,11 +12,15 @@ namespace CoraetionTask.Controllers
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IProductRepository _productRepository;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public CustomerController(ICustomerRepository customerRepository, IProductRepository productRepository)
+        public CustomerController(ICustomerRepository customerRepository, IProductRepository productRepository, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _productRepository = productRepository;
             _customerRepository = customerRepository;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         [Authorize(Roles = "Admin")]
@@ -80,8 +86,54 @@ namespace CoraetionTask.Controllers
 
             if (ModelState.IsValid)
             {
+                // check dublicated email
+                Customer  existingEmail = await _customerRepository.GetCustomerByEmailAsync(customer.Email);
+
+                if (existingEmail != null)
+                {
+                    ModelState.AddModelError("Email", "email is already taken");
+                    return View(customer);
+                }
                 await _customerRepository.AddAsync(customer);
-                return RedirectToAction("Index");
+
+                // split full name spaces to make username
+                string fullnameWithSpaces = customer.FullName;
+                string[] nameParts = fullnameWithSpaces.Split(' ');
+
+                string fullNameWithNoSpaces = string.Concat(nameParts);
+
+                // add customer as user in the system
+                IdentityUser newUser = new IdentityUser()
+                {
+                    UserName = fullNameWithNoSpaces,
+                    Email = customer.Email,
+                    PhoneNumber = customer.Mobile,
+                };
+
+                // save new user in database
+                IdentityResult result = await _userManager.CreateAsync(newUser, customer.Password);
+
+                if (result.Succeeded)
+                {
+                    if (await _roleManager.RoleExistsAsync("User"))
+                    {
+                        await _userManager.AddToRoleAsync(newUser, "User");
+                    }
+                    else
+                    {
+                        IdentityResult roleUser = await _roleManager.CreateAsync(new IdentityRole("User"));
+
+                        await _userManager.AddToRoleAsync(newUser, "User");
+                    }
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
             }
             return View(customer);
         }

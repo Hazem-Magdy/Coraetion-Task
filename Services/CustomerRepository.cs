@@ -29,6 +29,13 @@ namespace CoraetionTask.Services
             }
         }
 
+        public async Task<Customer> GetCustomerByEmailAsync(string customerEmail)
+        {
+            Customer customer = await context.Customers.FirstOrDefaultAsync(c => c.Email == customerEmail);
+
+            return customer;
+        }
+
         public async Task<Customer> GetCustomerByFullName(string customerFullName)
         {
             Customer customer = await context.Customers.FirstOrDefaultAsync(c=> c.FullName== customerFullName);

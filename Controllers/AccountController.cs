@@ -41,6 +41,12 @@ namespace CoraetionTask.Controllers
                     return View(newAccount); 
                 }
 
+                // split full name spaces to make username
+                string fullnameWithSpaces = newAccount.FullName;
+                string[] nameParts = fullnameWithSpaces.Split(' ');
+
+                string fullNameWithNoSpaces = string.Concat(nameParts);
+
                 // first register will be admin and any other rigester will be customer
                 if (_userManager.Users.Count() > 0)
                 {
@@ -50,16 +56,14 @@ namespace CoraetionTask.Controllers
                         FullName = newAccount.FullName,
                         Address = newAccount.Address,
                         Mobile = newAccount.Mobile,
+                        Email = newAccount.Email,
+                        Password = newAccount.Password,
                     };
 
                     // save new customer in database
                     await _customerRepository.AddAsync(newCustomer);
 
-                    // split full name spaces to make username
-                    string fullnameWithSpaces = newAccount.FullName;
-                    string[] nameParts = fullnameWithSpaces.Split(' ');
-
-                    string fullNameWithNoSpaces = string.Concat(nameParts);
+                    
 
                     // assign new customer as a user in the system
                     IdentityUser newUser = new IdentityUser()
@@ -99,7 +103,7 @@ namespace CoraetionTask.Controllers
                     // create admin to the system but not save him as a customer
                     IdentityUser newUser = new IdentityUser()
                     {
-                        UserName = newAccount.FullName,
+                        UserName = fullNameWithNoSpaces,
                         Email = newAccount.Email,
                         PhoneNumber = newAccount.Mobile,
                     };
@@ -143,7 +147,7 @@ namespace CoraetionTask.Controllers
                 if (existUser != null)
                 {
                     // get customer to get id from him
-                    Customer customer = await _customerRepository.GetCustomerByFullName(existUser.UserName);
+                    Customer customer = await _customerRepository.GetCustomerByEmailAsync(existUser.Email);
 
                     if (customer!=null)
                     {
